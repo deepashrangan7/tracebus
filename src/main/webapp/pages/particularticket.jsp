@@ -149,8 +149,10 @@
 					</tr>
 					<tr>
 						<td><a class="btn btn-primary" href="/viewtickets">back</a></td>
-						<td><a href="/cancel?tid=${tick.tid}" class="btn btn-primary">Cancel
-								Ticket</a></td>
+						<c:if test="${tick.active=='yes'}">
+							<td><a href="/cancel?tid=${tick.tid}"
+								class="btn btn-primary"> Cancel Ticket</a></td>
+						</c:if>
 
 					</tr>
 				</tbody>

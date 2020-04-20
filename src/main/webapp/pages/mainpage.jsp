@@ -86,6 +86,9 @@
     </div>
   </div>
 <br/>
+<a href="http://192.168.43.36:8089/ind.html" class="btn btn-primary">static</a>
+<br/>
+
   <div class="footer" style="margin-top: 3em;">
     <div>
     <span style="text-align: left;font-size: large;padding-right: 5em;">Copyright 	&copy; 2020</span>

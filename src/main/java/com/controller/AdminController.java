@@ -34,6 +34,8 @@ public class AdminController {
 
 	}
 
+	
+	
 	@GetMapping("/tickets")
 	public String processTicket(Integer tid, Model m) {
 		TicketBean tb = ticketLogic.findTicket(tid);
