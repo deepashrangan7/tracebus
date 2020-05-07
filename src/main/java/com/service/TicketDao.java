@@ -19,4 +19,8 @@ public interface TicketDao extends JpaRepository<TicketBean, Integer> {
 
 	@Query("select s from TicketBean s where s.uid=:uid and s.active='no'   ORDER BY s.date DESC")
 	public List<TicketBean> findByUidNotActive(String uid);
+
+	@Query("select s from TicketBean s where s.bus_no=:bus_no and s.active='yes'   ORDER BY s.date DESC")
+	public List<TicketBean> findByBusActive(Integer bus_no);
+
 }

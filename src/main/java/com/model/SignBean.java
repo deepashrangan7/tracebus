@@ -10,15 +10,17 @@ import org.springframework.stereotype.Component;
 public class SignBean {
 	@Pattern(regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$", message = "Type Valid emailId")
 	private String email;
+	@Pattern(regexp = "[6-9][0-9]{9}", message = "Please enter valid phone number")
+	private String phone;
 	@NotBlank(message = "Password must not be empty must be 4 characters length...")
-	@Min(value = 4,message = "length must be 4 characters")
+	@Min(value = 4, message = "length must be 4 characters")
 	private String password1;
 	@NotBlank(message = "Please type your password again ...")
 	private String password2;
 
 	@NotBlank(message = "Please enter your name...")
 	private String name;
-	
+
 	public String getEmail() {
 		return email;
 	}
@@ -54,6 +56,14 @@ public class SignBean {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

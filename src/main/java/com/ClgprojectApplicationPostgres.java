@@ -8,11 +8,11 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan("com")
-public class ClgprojectApplication {
+public class ClgprojectApplicationPostgres {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(ClgprojectApplication.class, args);
+		SpringApplication.run(ClgprojectApplicationPostgres.class, args);
 		System.out.println("server started at port 8089!!!!!!!!!!!");	
 	}
 

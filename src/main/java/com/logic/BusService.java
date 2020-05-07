@@ -7,19 +7,36 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.model.BusBean;
 import com.model.BusSpecificBean;
 import com.model.KnowYourBusses;
+import com.model.Notify;
 import com.model.SearchBean;
+import com.model.TicketBean;
+import com.model.UserBean;
 import com.service.BusDao;
+import com.service.NotifyDao;
+import com.service.TicketDao;
+import com.service.UserDao;
 
 @Service
 public class BusService {
 
 	@Autowired
+	private NotifyDao notifyDao;
+	@Autowired
+	private TicketDao ticketDao;
+	@Autowired
+	private UserDao userDao;
+	@Autowired
 	private BusDao busDao;
 	@Autowired
 	private BusLogic busLogic;
+	@Autowired
+	private SmsService sms;
+	@Autowired
+	private Notification notification;
 
 	public List<KnowYourBusses> knowMyBusses(SearchBean sb) {
 		List<KnowYourBusses> listOfBusses = new ArrayList<>();
@@ -28,7 +45,6 @@ public class BusService {
 			listOfBusses.add(new KnowYourBusses(b.getBus_no(), b.getLoc()));
 			int stops = no_of_gape(b, sb.getBoarding(), sb.getDestination());
 			listOfBusses.get(listOfBusses.size() - 1).setStops(stops);
-//			System.out.println(listOfBusses.get(listOfBusses.size()-1));
 		}
 		return listOfBusses;
 	}
@@ -199,7 +215,7 @@ public class BusService {
 	}
 
 	@Transactional
-	public void changeLoc(Integer bus_no) {
+	public void changeLoc(Integer bus_no, String email) {
 
 		BusBean b = busDao.findById(bus_no).get();
 		String dir = b.getDirection();
@@ -232,37 +248,77 @@ public class BusService {
 
 		}
 		busDao.save(b);
+		System.out.println("saved");
+
+		List<TicketBean> obj = ticketDao.findByBusActive(bus_no);
+		if (obj.size() > 0) {
+			for (TicketBean t : obj) {
+				if (notification.isTrue(t)) {
+					UserBean u = userDao.findById(t.getUid()).get();
+					try {
+						sms.noti(t, u.getPhone(), u.getName(), b.getLoc());
+					} catch (Exception e) {
+						// TODO: handle exception
+						System.out.println("number error");
+					}
+				}
+			} // for
+
+		} // if
+
+		System.out.println("until this");
+		List<Notify> n1 = notifyDao.findByBus(bus_no);
+
+		if (n1.size() > 0) {
+			for (Notify n : n1) {
+				TicketBean t = new TicketBean();
+				t.setBus_no(n.getBus_no());
+				t.setBusfrom(n.getPickup());
+				t.setBusto(n.getDroping());
+				t.setUid(n.getEmail());
+				if (notification.isTrue(t)) {
+					UserBean u = userDao.findById(t.getUid()).get();
+					System.out.println("inside it");
+					try {
+						sms.noti1(t, u.getPhone(), u.getName(), b.getLoc());
+					} catch (Exception e) {
+						// TODO: handle exception
+						System.out.println("number error");
+					} // catch
+
+				} // if isTrue
+			} // for
+		} // n size
 	}
 
 	public String nextLoc(Integer bus_no, BusBean b) {
 
 		String loc = b.getLoc();
-		String loc1="";
+		String loc1 = "";
 		if (b.getDirection().equals("up")) {
 
 			if (loc.equals(b.getStop1())) {
-				loc1=(b.getStop2());
+				loc1 = (b.getStop2());
 			} else if (loc.equals(b.getStop2())) {
-				loc1=(b.getStop3());
+				loc1 = (b.getStop3());
 			} else if (loc.equals(b.getStop3())) {
-				loc1=(b.getStop4());
+				loc1 = (b.getStop4());
 			} else if (loc.equals(b.getStop4())) {
-				loc1=b.getStop5();
+				loc1 = b.getStop5();
 			}
 
 		} else {
 
 			if (loc.equals(b.getStop2())) {
-				loc1=(b.getStop1());
+				loc1 = (b.getStop1());
 //				b.setDirection("up");
 			} else if (loc.equals(b.getStop3())) {
-				loc1=(b.getStop2());
+				loc1 = (b.getStop2());
 			} else if (loc.equals(b.getStop4())) {
-				loc1=(b.getStop3());
+				loc1 = (b.getStop3());
 			} else if (loc.equals(b.getStop5())) {
-				loc1=(b.getStop4());
+				loc1 = (b.getStop4());
 			}
-
 
 		}
 		return loc1;

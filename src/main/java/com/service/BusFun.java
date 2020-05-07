@@ -38,13 +38,6 @@ public class BusFun {
 			x=(e-f)*5;
 		else
 			x=(f-e)*5;
-//		if(e-f>0)
-//			x=(e-f)*5;
-//		else {
-//			int times=5-e;
-//			times+=4-e;
-//			x=times*x;
-//		}
 		return x;
 
 	}
@@ -53,25 +46,4 @@ public class BusFun {
 
 
 
-//public void gen(String name) throws IOException
-//{
-//	Date d = new Date();
-//	int tid = 0;
-//	String datet = d.getDate() + "/ 2"  + "/2020" + " " + d.getHours() + ":" + d.getMinutes() + ":"
-//			+ d.getSeconds();
-//	String details = "\n\n		This is Your Ticket " + name + "\n		Your Ticket Id is 0 \n" 
-//			+ "\n		Bus No is  1 \n date is "+datet ;
-//
-//	ByteArrayOutputStream out1 = QRCode.from(details).to(ImageType.JPG).stream();
-//	String path = "E:\\QR\\";
-//	path += name + "" + tid + ".png";
-//	java.io.File fs = new java.io.File(path);
-//	FileOutputStream f = new FileOutputStream(fs);
-//	f.write(out1.toByteArray());
-//	f.flush();
-//	System.out.println("\n\n!!!!!!QR SUCCESFULLY generated!!!!!!");
-//	
-//	
-////res.setContentType("text/html"); 
-////
-//	}
+

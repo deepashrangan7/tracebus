@@ -2,6 +2,8 @@ package com.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.logic.BusLogic;
 import com.logic.BusService;
+import com.logic.Notification;
 import com.model.BusSpecificBean;
 import com.model.LocateBean;
 import com.model.SearchBean;
+import com.service.MapService;
 
 @Controller
 public class BusController {
@@ -23,24 +27,30 @@ public class BusController {
 	private BusService busService;
 	@Autowired
 	private BusLogic busLogic;
+	@Autowired
+	private Notification notification;
+
+	@Autowired
+	private MapService map;
+
 	@RequestMapping("/locate")
-	public String locate(@ModelAttribute("locate")LocateBean lb,Model m) {
-		if(lb==null||lb.getBus_no()==null||lb.getBus_no()==0)
-		{
-			m.addAttribute("loc",null);
-			
-		}else {
+	public String locate(@ModelAttribute("locate") LocateBean lb, Model m) {
+		if (lb == null || lb.getBus_no() == null || lb.getBus_no() == 0) {
+			m.addAttribute("loc", null);
+
+		} else {
 			m.addAttribute("loc", 1);
-			BusSpecificBean obj=busService.findSpecific(lb.getBus_no());
-			m.addAttribute("detail",obj);
+			BusSpecificBean obj = busService.findSpecific(lb.getBus_no());
+			m.addAttribute("detail", obj);
+
 		}
-			return "locate";
+		return "locate";
 	}
-	
+
 	@RequestMapping("/locatebusses")
 	public String locate(@ModelAttribute("searchbean") SearchBean sb, BindingResult br, Model m) {
 //		System.out.println(sb.getBoarding()+" came as  "+sb.getDestination());
-		
+
 		if (sb.getBoarding() == null || sb.getDestination() == null || sb.getBoarding().equals("")
 				|| sb.getDestination().equals("")) {
 			m.addAttribute("loc", null);
@@ -65,7 +75,8 @@ public class BusController {
 	}
 
 	@GetMapping("/userhome")
-	public String userHome() {
+	public String userHome(HttpSession s, Model m) {
+		m.addAttribute("notic", notification.getNotification((String) s.getAttribute("user")));
 
 		return "userhome";
 	}
@@ -76,29 +87,31 @@ public class BusController {
 		return obj;
 
 	}
+
 	@ModelAttribute("particularbus")
-	public List<Integer> getAllBus(){
-		List<Integer> obj=busService.allBus();
+	public List<Integer> getAllBus() {
+		List<Integer> obj = busService.allBus();
 		return obj;
 	}
-@RequestMapping("/calculatefare")
+
+	@RequestMapping("/calculatefare")
 	public String calculateFare(@ModelAttribute("searchbean") SearchBean sb, BindingResult br, Model m) {
-	if (sb.getBoarding() == null || sb.getDestination() == null || sb.getBoarding().equals("")
-			|| sb.getDestination().equals("")) {
-		m.addAttribute("loc", null);
-		m.addAttribute("err", null);
-		return "calculatefare";
-	} else if (sb.getBoarding().equals(sb.getDestination())) {
-		m.addAttribute("loc", null);
+		if (sb.getBoarding() == null || sb.getDestination() == null || sb.getBoarding().equals("")
+				|| sb.getDestination().equals("")) {
+			m.addAttribute("loc", null);
+			m.addAttribute("err", null);
+			return "calculatefare";
+		} else if (sb.getBoarding().equals(sb.getDestination())) {
+			m.addAttribute("loc", null);
 
-		m.addAttribute("err", "Choose different boarding point or desitantion point");
+			m.addAttribute("err", "Choose different boarding point or desitantion point");
 //		System.out.println(sb.getBoarding()+" same as "+sb.getDestination());
-		return "calculatefare";
-	}else {
-		m.addAttribute("loc", 1);
-		m.addAttribute("locbus", busLogic.calucateFare(sb.getBoarding().trim(), sb.getDestination().trim()));
+			return "calculatefare";
+		} else {
+			m.addAttribute("loc", 1);
+			m.addAttribute("locbus", busLogic.calucateFare(sb.getBoarding().trim(), sb.getDestination().trim()));
 
-	}
-	return "calculatefare";
+		}
+		return "calculatefare";
 	}
 }

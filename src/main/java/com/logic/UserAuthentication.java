@@ -22,7 +22,7 @@ public class UserAuthentication {
 
 	public String findImg(String email) {
 		String img = is.printImg(userDao.findById(email).get().getEmail());
-		System.out.println(img+" in img");
+//		System.out.println(img+" in img");
 		return img;
 	}
 
@@ -52,6 +52,7 @@ public class UserAuthentication {
 		String pass = encode(sb.getPassword1().trim());
 		sb.setPassword1(pass.trim());
 		UserBean ub = new UserBean(sb.getName().trim(), sb.getPassword1().trim(), sb.getEmail().trim());
+		ub.setPhone("+91"+sb.getPhone());
 		userDao.save(ub);
 
 	}

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.logic.BusLogic;
+import com.logic.Notification;
 import com.logic.TicketLogic;
 import com.model.FareBean;
 import com.model.FilterBean;
@@ -29,6 +30,8 @@ public class TicketsController {
 	@Autowired
 	private TicketFunc ticketFunc;
 
+	@Autowired
+	private Notification noti;
 	@GetMapping("/booktickets")
 	public String bookTickets(Integer bus_no, Double fare, String pickup, String drop, Model m) {
 
@@ -57,6 +60,7 @@ public class TicketsController {
 		String user = (String) session.getAttribute("user");
 		String name = (String) session.getAttribute("name");
 		int tid = ticketLogic.bookTicket(bus_no, fare, pickup, drop, noofticket, user, name);
+	
 		m.addAttribute("bus_no", bus_no);
 		m.addAttribute("pickup", pickup);
 		m.addAttribute("drop", drop);
@@ -88,11 +92,13 @@ public class TicketsController {
 	}
 
 	@RequestMapping("/cancel")
-	public String cancel(Integer tid, HttpSession session,Model m) {
+	public String cancel(Integer tid, HttpSession session, Model m) {
 		String user = (String) session.getAttribute("user");
 		String name = (String) session.getAttribute("name");
-		ticketFunc.cancel(tid,user,name);
+		ticketFunc.cancel(tid, user, name);
 		m.addAttribute("can", 1);
+
+		m.addAttribute("notic", noti.getNotification((String) session.getAttribute("user")));
 		return "userhome";
 	}
 }// class

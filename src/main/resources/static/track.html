@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+
+<head>
+<title>Trace</title>
+<link rel="stylesheet" href="assets/ol3/css/ol.css" type="text/css" />
+<link rel="stylesheet" href="assets/css/samples.css" type="text/css" />
+</head>
+
+<body>
+
+	<div id="map" class="full-map"></div>
+
+
+	<div id="overlay" class="marker">
+		<img src="assets/bus.png" class="marker" width="1" height="1">
+	</div>
+	<embed src="time.mp3" width="0" height="0" autostart="false"
+		enablejavascript="true" id="snd">
+	<script src="assets/ol3/js/ol-debug.js"></script>
+	<script>
+        const params = new URLSearchParams(document.location.search);
+
+        let i = 0;
+        //const lat = params.get("lat");
+        //const lo = params.get("lo");
+        const stop = params.get("stop");
+        // 11.090115,76.942066
+        // 11.090147,76.941905
+        if (stop == 'gandhipuram')
+            i = 0;
+        else if (stop == 'ganapathy')
+            i = 1;
+
+        else if (stop == 'sivanandhapuram')
+            i = 2;
+
+        else if (stop == 'kct tech park')
+            i = 4;
+
+        else if (stop == 'racecourse')
+            i = 5;
+
+        else if (stop == 'saravanampatty')
+            i = 3;
+
+        else if (stop == 'lakshmimills')
+            i = 6;
+
+        else if (stop == 'puliyakulam')
+            i = 7;
+
+
+        else if (stop == 'ramanathapuram')
+            i = 8;
+
+        else if (stop == 'singanallur')
+            i = 9;
+        else if (stop == 'peelamedu')
+            i = 10;
+        else if (stop == 'thudiyalur')
+            i = 11;
+        else if (stop == 'vadamadurai')
+            i = 12;
+
+        else if (stop == 'nggocolony')
+            i = 13;
+        else if (stop == 'kavundampalayam')
+            i = 14;
+        else if (stop == 'newbusstop')
+            i = 15;
+        else if (stop == 'ramakrishna')
+            i = 16;
+
+
+        function soundplay() {
+            console.log("played");
+            var sound = new Audio("time.mp3");
+            sound.play();
+
+        }
+        let loc1 = [
+            [11.016436, 76.968462],//gandhipuram 0
+            [11.036009, 76.978195],//ganapathy 1
+            [11.051707, 76.992752],//sivanandhapuram 2
+            [11.078159, 77.003370],//sarvanampaty 3
+            [11.081284, 76.990463],//kct 4
+            [11.003787, 76.981462],//racecourse 5
+            [11.013540, 76.986694],//lakshmimills 6
+            [11.003842, 76.993521],//puliyakulam 7
+            [10.997133, 76.999255],//ramanathapuram 8
+            [11.002183, 77.028628],//singanallur 9
+            [11.022968, 77.001046],//peelamedu 10
+            [11.080261, 76.941768],//thudiyalur 11
+            [11.074630, 76.941994],//vadamadurai 12
+            [11.089946, 76.938638],//nggocolony 13
+            [11.045095, 76.947358],//kavundampalayam 14
+            [11.030011, 76.951157],//newbus stop 15
+            [11.102354, 76.964518]//ramakrishna 16
+
+        ];
+        var center = ol.proj.transform([76.968163, 11.016424], 'EPSG:4326', 'EPSG:3857');
+        var map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            target: 'map',
+            view: new ol.View({
+                center: center,
+                zoom: 17
+            })
+        })
+
+        repeat()
+
+        function repeat() {
+            const inter = setInterval(() => {
+                               draw(loc1[i][1], loc1[i][0]);
+                clearInterval(inter)
+
+            }
+                , 100
+
+            );
+
+        }
+        function draw(x, y) {
+            var feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([x, y], 'EPSG:4326',
+                    'EPSG:3857'))
+            })
+            var vectorSource = new ol.source.Vector({
+                features: [feature]
+            })
+            var vectorLayer = new ol.layer.Vector({
+                source: vectorSource,
+            })
+            var center1 = ol.proj.transform([x, y], 'EPSG:4326', 'EPSG:3857');
+            var overlay = new ol.Overlay({
+                position: center1,
+                element: document.getElementById('overlay')
+            });
+
+            const view = new ol.View({
+                center: center1,
+                zoom: 16.5
+            })
+
+            map.setView(view);
+            map.addOverlay(overlay);
+        }
+
+
+
+    </script>
+
+</body>
+
+</html>

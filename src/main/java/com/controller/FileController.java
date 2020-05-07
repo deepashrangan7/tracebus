@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.logic.Notification;
 import com.logic.UserAuthentication;
 import com.model.ProfileImage;
 import com.service.ImageService;
@@ -28,6 +28,9 @@ public class FileController {
 	private ProfileDao pd;
 	@Autowired
 	private UserAuthentication UserAuthentication;
+
+	@Autowired
+	private Notification notification;
 
 	@RequestMapping("/up")
 	public String uploadPage() {
@@ -48,6 +51,8 @@ public class FileController {
 			if (saveImage == 1) {
 				String pimg = UserAuthentication.findImg(id.trim());
 				session.setAttribute("pimg", pimg);
+				m.addAttribute("notic", notification.getNotification(id.trim()));
+
 				return "userhome";
 			} else {
 				return "error";
@@ -73,9 +78,11 @@ public class FileController {
 	}
 
 	@GetMapping("/noupload")
-	public String noUpload(HttpSession s) {
-		s.setAttribute("pimg",null);
-		pd.save(new ProfileImage((String)s.getAttribute("user"),null));
+	public String noUpload(HttpSession s,Model m) {
+		s.setAttribute("pimg", null);
+		pd.save(new ProfileImage((String) s.getAttribute("user"), null));
+		m.addAttribute("notic", notification.getNotification((String) s.getAttribute("user")));
+		
 		return "userhome";
 	}
 

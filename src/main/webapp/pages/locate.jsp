@@ -145,7 +145,7 @@
 			</c:when>
 			<c:otherwise>
 				<div style="margin-left: 1em; margin-right: 1em;">
-					<h5 style="text-align: center;">Bus No : ${detail.bus_no }</h5>
+					<h5 style="text-align: center;">Bus No : ${detail.bus_no}</h5>
 					<table class="table table-hover">
 						<thead>
 							<tr>
@@ -373,9 +373,17 @@
 					</table>
 				</div>
 
-				<h4 style="margin-bottom: 2em;">
-					<a href="#" class="btn btn-primary"> Track</a>
-				</h4>
+				<c:if test="${detail.bus_no!=8 }">
+					<h4 style="margin-bottom: 2em;">
+						<a href="track.html?stop=${detail.loc}" target="_blank"
+							class="btn btn-primary"> Track</a>
+					</h4>
+				</c:if>
+				<c:if test="${detail.bus_no==8 }">
+					<h4 style="margin-bottom: 2em;">
+						<a href="/track2.html" class="btn btn-primary" target="_blank"> Track</a>
+					</h4>
+				</c:if>
 
 			</c:otherwise>
 		</c:choose>

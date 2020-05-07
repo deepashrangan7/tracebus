@@ -9,19 +9,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class UserBean {
-	
-	
+
 	private String name;
-	
+
 	private String password;
-	
+
 	@Id
 	private String email;
-	
-	
 
+	private String phone;
 
 	public UserBean() {
 		super();
@@ -61,6 +59,14 @@ public class UserBean {
 	@Override
 	public String toString() {
 		return "UserBean [name=" + name + ", password=" + password + ", email=" + email + "]";
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

@@ -177,8 +177,10 @@ body {
 					</tr>
 				</tbody>
 			</table>
+			<br />
+			<br />
 			<c:choose>
-				<c:when test="${tick.active=='yes'}">
+				<c:when test="${tick.active!='no'}">
 
 					<form action="/boarded" method="post">
 
@@ -190,20 +192,23 @@ body {
 						</div>
 						<i style="color: red">${err}</i> <br /> <input type="hidden"
 							name="tid" value=${tick.tid}>
-
+							<br/>
+							 <input type="submit"
+							class="btn btn-primary" value="redeem">
 					</form>
 				</c:when>
 				<c:otherwise>
+
 					<div class="alert alert-danger" role="alert"
 						style="text-align: center;">Ticket already used!!!</div>
 
-
+					<br />
+					<br />
 				</c:otherwise>
 			</c:choose>
 		</div>
 
 	</div>
-
 	<br />
 	<br />
 	<br />

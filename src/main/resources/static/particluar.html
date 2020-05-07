@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Trace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="assets/ol3/css/ol.css" type="text/css" />
+    <link rel="stylesheet" href="assets/css/samples.css" type="text/css" />
+    <!-- font-awesome is an iconic font, which means we can draw resolution-independent icons -->
+</head>
+
+<body>
+    <div id="map" class="full-map"></div>
+    <div id="location" class="marker"><img src="assets/bus.png" class="marker" width="1" height="1"></div>
+    <script src="assets/ol3/js/ol-debug.js"></script>
+    <script>
+        const params = new URLSearchParams(document.location.search);
+
+        const stop = params.get("stop");;
+        var lat = 0, lo = 0;
+        // const no = params.get("busNo");
+
+        // const so = params.get("sound");
+        if (stop === 'gandhipuram') {
+            lo = 76.968544;
+            lat = 11.016591;
+        } else if (stop === 'ganapathy') {
+            lo = 76.978162;
+            lat = 11.035971;
+        }
+        var layer = new ol.layer.Tile({
+            source: new ol.source.OSM()
+        });
+
+        var london = ol.proj.transform([lo, lat], 'EPSG:4326', 'EPSG:3857');
+
+        var view = new ol.View({
+            center: london,
+            zoom: 6
+        });
+
+        var map = new ol.Map({
+            target: 'map',
+            layers: [layer],
+            view: view
+        });
+
+        // create an Overlay using the div with id location.
+        var marker = new ol.Overlay({
+            element: document.getElementById('location'),
+            positioning: 'bottom-left',
+            stopEvent: false
+        });
+
+        // add it to the map
+        map.addOverlay(marker);
+
+        // create a Geolocation object setup to track the position of the device
+        var geolocation = new ol.Geolocation({
+            tracking: true
+        });
+
+        // bind the projection to the view so that positions are reported in the
+        // projection of the view
+        geolocation.bindTo('projection', view);
+
+        // bind the marker's position to the geolocation object, the marker will
+        // move automatically when the GeoLocation API provides position updates
+        marker.bindTo('position', geolocation);
+
+        // when the GeoLocation API provides a position update, center the view
+        // on the new position
+        geolocation.on('change:position', function () {
+            var p = geolocation.getPosition();
+            console.log(lat + ' : ' + lo);
+
+            london = ol.proj.transform([lo, lat], 'EPSG:4326', 'EPSG:3857');
+
+            view.setCenter(london);
+        });
+    </script>
+</body>
+
+</html>

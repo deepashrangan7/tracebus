@@ -2,6 +2,8 @@ package com.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import com.logic.TicketLogic;
 import com.model.BusBean;
 import com.model.LocateBean;
 import com.model.TicketBean;
+import com.service.AdminFunc;
 import com.service.BusDao;
 
 @Controller
@@ -26,16 +29,17 @@ public class AdminController {
 	private BusService busService;
 	@Autowired
 	private BusDao busDao;
+	@Autowired
+	private AdminFunc adminFunc;
 
 	@RequestMapping("/ad")
 	public String adminHome(Model m) {
 		m.addAttribute("noti", 0);
+		adminFunc.reset();
 		return "adminhome";
 
 	}
 
-	
-	
 	@GetMapping("/tickets")
 	public String processTicket(Integer tid, Model m) {
 		TicketBean tb = ticketLogic.findTicket(tid);
@@ -78,8 +82,8 @@ public class AdminController {
 	}
 
 	@RequestMapping("/change")
-	public String change(Integer bus_no) {
-		busService.changeLoc(bus_no);
+	public String change(Integer bus_no,HttpSession session) {
+		busService.changeLoc(bus_no,(String)session.getAttribute("user"));
 		return "adminhome";
 	}
 

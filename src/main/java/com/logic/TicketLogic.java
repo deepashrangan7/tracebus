@@ -5,12 +5,12 @@ import java.util.Date;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 
 import com.model.TicketBean;
 import com.service.MailFunction;
 import com.service.TicketDao;
+import com.service.UserDao;
 
 @Service
 public class TicketLogic {
@@ -21,6 +21,11 @@ public class TicketLogic {
 	private QRGenerator qr;
 	@Autowired
 	private MailFunction mailFunction;
+	@Autowired
+	private SmsService sms;
+
+	@Autowired
+	private UserDao userDao;
 
 	@Transactional
 	public int bookTicket(Integer bus_no, Double fare, String pickup, String drop, Integer noofticket, String user,
@@ -31,13 +36,15 @@ public class TicketLogic {
 		tb.setBus_no(bus_no);
 		tb.setBusfrom(pickup);
 		tb.setBusto(drop);
-		tb.setCost(fare*noofticket);
+		tb.setCost(fare * noofticket);
 		tb.setDate(d);
 		tb.setCount(noofticket);
 		tb.setUid(user);
 		ticketDao.save(tb);
 		qr.genrateQRTicket(tb.getTid(), name);
 		mailFunction.ticketBooked(user, tb.getTid(), name);
+		sms.ticketBooked(name, tb.getTid(), bus_no, pickup, drop,
+				userDao.findById(tb.getUid().trim()).get().getPhone());
 		return tb.getTid();
 	}
 

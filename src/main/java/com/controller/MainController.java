@@ -1,7 +1,5 @@
 package com.controller;
 
-import java.util.Date;
-
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -14,10 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.logic.Notification;
+import com.logic.SmsService;
 import com.logic.UserAuthentication;
 import com.model.LoginBean;
 import com.model.SignBean;
-import com.mysql.cj.Session;
 import com.service.MailFunction;
 
 @Controller
@@ -27,15 +26,21 @@ public class MainController {
 	@Autowired
 	private MailFunction mailFunction;
 
+	@Autowired
+	private Notification notification;
+
+	@Autowired
+	private SmsService sms;
+
 	@GetMapping("/logout")
 	public String logout(HttpSession session) {
-	session.setAttribute("user", null);
-	session.setAttribute("vale", null);
-	session.setAttribute("pimg", null);
+		session.setAttribute("user", null);
+		session.setAttribute("vale", null);
+		session.setAttribute("pimg", null);
 
-	return "mainpage";
+		return "mainpage";
 	}
-	
+
 	@GetMapping("/")
 	public String mainPage(HttpSession session) {
 
@@ -43,7 +48,7 @@ public class MainController {
 		session.setAttribute("vale", null);
 		session.setAttribute("pimg", null);
 		session.setAttribute("name", null);
-	
+
 		return "mainpage";
 	}
 
@@ -80,6 +85,7 @@ public class MainController {
 					session.setAttribute("user", lBean.getEmail().trim());// saving the state
 
 					session.setAttribute("name", userAuthentication.findName(lBean.getEmail().trim()));
+					m.addAttribute("notic", notification.getNotification(lBean.getEmail().trim()));
 					return "userhome";
 
 				} else {
@@ -111,7 +117,11 @@ public class MainController {
 			session.setAttribute("user", sb.getEmail().trim());
 			session.setAttribute("name", sb.getName().trim());
 			userAuthentication.createAccount(sb);
-			mailFunction.sendEmail(sb.getEmail().trim(), sb.getName().trim());
+			try {
+				mailFunction.sendEmail(sb.getEmail().trim(), sb.getName().trim());
+				sms.createdAccount(sb.getEmail().trim(), sb.getName().trim(), "+91" + sb.getPhone());
+			} catch (Exception e) {
+			}
 			return "imageupload";
 
 		} else {
